@@ -52,17 +52,25 @@ provider:
 #  exclude:
 #    - exclude-me.js
 #    - exclude-me-dir/**
+plugins:
+  - serverless-python-requirements
+
+custom:
+  config: ${file(config.yml)}
 
 functions:
   authorizer:
-    handler: functions/authorizer/index.handler
+    handler: functions/authorizer/index.lambda_handler
     name: ${self:service}-${self:provider.stage}-authorizer
     package:
       include:
         - functions/authorizer/**
         - config.yml
+    environment:
+      USER_POOL_ID: ${self:custom.config.USER_POOL_ID}
+      CLIENT_ID: ${self:custom.config.CLIENT_ID}
   hello:
-    handler: functions/hello/index.handler
+    handler: functions/hello/index.lambda_handler
     name: ${self:service}-${self:provider.stage}-hello
     package:
       include:
